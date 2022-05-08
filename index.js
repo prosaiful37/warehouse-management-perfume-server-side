@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 5000;
 const app = express();
@@ -28,7 +28,17 @@ async function run(){
             const cursor = inventoryCollection.find(query)
             const products = await cursor.toArray();
             res.send(products)
-        })
+        });
+
+
+        app.get('/product/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const product = await inventoryCollection.findOne(query)
+            res.send(product);
+
+        });
+
         
     }
     finally{
@@ -47,6 +57,7 @@ app.get('/', (req, res) => {
     res.send('perfume is running');
 })
 
-app.listen(port , () => {
-    console.log(`hello customer is this ${port}`);
-})
+app.listen(port, () => {
+    console.log("listening to ", port);
+});
+  
